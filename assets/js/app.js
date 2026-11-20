@@ -789,6 +789,11 @@
         // dynamic value; a previewed state shows the real coloured tag.
         if (!active) {
           // Beneficiary ID: no orange box, just the dotted-underlined text.
+          // A states-driven tag (Delivery Status) is a preview placeholder,
+          // so it gets the light orange tint like Search Results.
+          if (el.states) {
+            return `<div class="${CANVAS_EL_CLASS} block w-fit mb-3 px-2.5 py-1 rounded-md border border-[#F9E2D4] bg-[#FFF8F3] text-sm text-slate-700" ${canvasElAttr(el)}>${dynamicPlain(displayText)}</div>`;
+          }
           const mark = tagStyle === "id" ? dynamicPlain : dynamicValue;
           return `<div class="${CANVAS_EL_CLASS} block w-fit mb-3 rounded-md text-sm text-slate-700" ${canvasElAttr(el)}>${mark(displayText)}</div>`;
         }
@@ -904,10 +909,32 @@
     // element is actually showing its default — hide it the moment any
     // state is being actively previewed (e.g. a specific Delivery Status).
     const isPreviewingAState = screen.elements.some((el) => el.states && el.activeStateId);
-    const captionEl = document.getElementById("default-preview-caption");
-    if (captionEl) captionEl.classList.toggle("hidden", isPreviewingAState);
+    const toolbarEl = document.getElementById("canvas-toolbar");
+    if (toolbarEl) {
+      toolbarEl.innerHTML = `
+        <div class="flex-shrink-0 whitespace-nowrap inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-50 text-xs font-medium text-[#191D88]">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="4" rx="1" stroke="currentColor" stroke-width="1.4"/><rect x="3" y="12" width="14" height="4" rx="1" stroke="currentColor" stroke-width="1.4"/></svg>
+          ${escapeHtml(screen.name)}
+        </div>`;
+    }
+
+    // "Default preview" tag sits on the phone's bottom edge (straddling the
+    // bezel), so it never takes height from the phone; the full sentence
+    // shows in a tooltip above it on hover/focus.
+    const previewTagHtml = isPreviewingAState
+      ? ""
+      : `<div id="default-preview-caption" class="group absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-1/2 z-20 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white border border-gray-300 shadow-sm text-xs text-gray-600 whitespace-nowrap">
+          Default preview
+          <button type="button" class="inline-flex text-gray-500 hover:text-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c2410c]/40 rounded-full" aria-label="About the default preview" aria-describedby="default-preview-tip">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.4"/><path d="M10 9v4.5M10 6.5v.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </button>
+          <div id="default-preview-tip" role="tooltip" class="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-64 whitespace-normal rounded-md bg-gray-900 px-3 py-2 text-xs leading-snug text-white shadow-lg opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity">
+            You&rsquo;re viewing the default preview. Scroll or select an element in Page Properties to start exploring it.
+          </div>
+        </div>`;
 
     canvasEl.innerHTML = `
+      <div class="relative h-full max-h-[660px] flex items-center">
       <div class="phone-frame relative rounded-[2rem] border-[10px] border-black bg-white shadow-xl overflow-hidden flex flex-col">
         <div class="flex items-center gap-2 px-4 py-3 bg-[#0f3d4e] text-white flex-shrink-0">
           <svg class="w-4 h-4" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
@@ -941,6 +968,8 @@
         </div>
         ${renderFooterHtml(screen.elements, gating)}
         ${renderPopupOverlayHtml(screen.elements, gating)}
+      </div>
+      ${previewTagHtml}
       </div>`;
 
     canvasEl.querySelectorAll(".canvas-el").forEach((node) => {
