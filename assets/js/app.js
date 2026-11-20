@@ -247,16 +247,14 @@
   // The dashed underline alone is the "this is placeholder data" signal, and
   // text-gray-600 keeps ~7:1 contrast on white (passes WCAG AA/AAA), unlike
   // the lighter gray-400 this used to be.
-  // One shared chip so every dynamic value on the canvas looks identical —
-  // same container, size, weight and colour wherever it sits (headings,
-  // captions, label/value rows, cards, tags, table cells). It overrides the
-  // parent's font so a heading's value doesn't look different from a
-  // caption's. Solid soft border + dotted underline (the dotted line also
-  // shows on empty values). slate-700 on the very light orange tint is well above WCAG AA.
+  // Every dynamic value: plain text with a dotted underline, same size and
+  // colour wherever it sits. No tinted box — the light orange tint is kept
+  // only for preview placeholders (Search Results, Vaccination History).
+  // The dotted line also shows on empty values (e.g. table cells).
   const dynamicValue = (text) =>
-    `<span class="inline-flex items-center align-middle min-h-[1.75rem] px-2 py-1 rounded-md border border-[#F9E2D4] bg-[#FFF8F3] text-sm leading-5 font-normal text-slate-700 whitespace-nowrap"><span class="inline-block min-w-[2.5rem] border-b-[1.5px] border-dotted border-slate-500 leading-4">${escapeHtml(
+    `<span class="inline-block align-middle min-w-[2.5rem] border-b-[1.5px] border-dotted border-slate-500 text-sm leading-snug font-normal text-slate-700 whitespace-nowrap">${escapeHtml(
       text || ""
-    )}</span></span>`;
+    )}</span>`;
 
   // Same dotted-underline marker without the tinted box — used inside the
   // grey member card (Member Name, Gender | Age), where the box isn't wanted.
@@ -623,7 +621,9 @@
 
       if (el.outerCard) {
         const group = [];
-        while (i < visible.length && visible[i].outerCard) {
+        // A different cardGroup starts a new white card (e.g. one card per
+        // cycle table on Vaccination Summary).
+        while (i < visible.length && visible[i].outerCard && (visible[i].cardGroup || null) === (el.cardGroup || null)) {
           group.push(visible[i]);
           i += 1;
         }
@@ -802,6 +802,7 @@
         const columns = (el.columns || []).filter((c) => c.enabled !== false);
         const rows = el.rows && el.rows.length ? el.rows : [columns.map(() => "")];
         return `
+          ${el.title ? `<div class="text-base font-semibold text-gray-800 mb-2">${escapeHtml(el.title)}</div>` : ""}
           <div class="${CANVAS_EL_CLASS} border border-gray-200 rounded-md overflow-hidden mb-3" ${canvasElAttr(el)}>
             <div class="overflow-x-auto">
               <table class="w-full text-xs border-collapse">
@@ -832,7 +833,11 @@
               <div class="h-1.5 w-16 rounded-full bg-gray-200"></div>
               <svg class="w-3 h-3" viewBox="0 0 20 20" fill="none"><path d="M8 4L14 10L8 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </div>
-          </div>`;
+          </div>${
+            el.showMore
+              ? `<div class="flex items-center gap-1 text-sm text-[#c2410c] underline underline-offset-2 mb-1">Show More<svg class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="none"><path d="M10 4v12M5 11l5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`
+              : ""
+          }`;
       }
       default:
         return "";

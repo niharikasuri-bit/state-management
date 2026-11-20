@@ -261,6 +261,53 @@ window.DIGIT_MODULE = {
       label: "Delivery",
       screens: [
         {
+          id: "vaccination-summary",
+          name: "Vaccination Summary",
+          badge: "Partially Configurable",
+          pageHeading: "Vaccination Summary",
+          pageDescription: "Review the beneficiary details and vaccination history.",
+          elements: [
+            {
+              id: "vaccination-beneficiary-details", label: "Beneficiary Details", type: "labelPairList", configurable: true, visible: true, noToggle: true, elementType: "Template text", outerCard: true, cardGroup: "details",
+              pairs: [
+                { label: "Name", enabled: true },
+                { label: "Age", enabled: true },
+                { label: "Gender", enabled: true },
+                { label: "Registration date", enabled: true }
+              ]
+            },
+            // Single and multi cycle show different history, so this works
+            // like Search Results: no table by default (the tinted
+            // placeholder), and previewing a type reveals its tables.
+            {
+              id: "vaccination-history", label: "Vaccination History", type: "resultGroup", configurable: true, visible: true,
+              elementType: "Template card", activeStateId: null,
+              infoText: "Single cycle and multi cycle both show the last vaccination details; multi cycle also shows Show More.",
+              states: [
+                { id: "single-cycle", name: "Single Cycle", elements: [{ id: "table-last-vaccination", required: true }] },
+                { id: "multi-cycle", name: "Multi Cycle", elements: [{ id: "table-vaccination-cycle-1", required: true }] }
+              ]
+            },
+            {
+              id: "table-last-vaccination", label: "Last vaccination details", type: "table", configurable: true, visible: true, outerCard: true, cardGroup: "single", title: "Last vaccination details", elementType: "Table",
+              columns: [
+                { label: "Vaccination no.", enabled: true },
+                { label: "Status", enabled: true }
+              ],
+              rows: []
+            },
+            {
+              id: "table-vaccination-cycle-1", label: "Last vaccination details", type: "table", configurable: true, visible: true, outerCard: true, cardGroup: "cycle-1", title: "Last vaccination details", showMore: true, elementType: "Table",
+              columns: [
+                { label: "Vaccination no.", enabled: true },
+                { label: "Status", enabled: true }
+              ],
+              rows: []
+            },
+            { id: "btn-vaccinate", label: "Vaccinate", type: "button", configurable: true, visible: true, text: "Vaccinate", style: "primary", ctaGroup: "Delivery actions", elementType: "Button" }
+          ]
+        },
+        {
           id: "eligibility-assessment",
           name: "Eligibility Assessment",
           badge: "Fully Configurable",
