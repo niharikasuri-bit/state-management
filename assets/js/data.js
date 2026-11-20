@@ -282,7 +282,7 @@ window.DIGIT_MODULE = {
             {
               id: "vaccination-history", label: "Vaccination History", type: "resultGroup", configurable: true, visible: true,
               elementType: "Template card", activeStateId: null,
-              infoText: "Single cycle and multi cycle both show the last vaccination details; multi cycle also shows Show More.",
+              infoText: "List of different vaccination history views that appear on the screen, based on the number of delivery cycles.",
               states: [
                 { id: "single-cycle", name: "Single Cycle", elements: [{ id: "table-last-vaccination", required: true }] },
                 { id: "multi-cycle", name: "Multi Cycle", elements: [{ id: "table-vaccination-cycle-1", required: true }] }
