@@ -247,10 +247,16 @@
   // The dashed underline alone is the "this is placeholder data" signal, and
   // text-gray-600 keeps ~7:1 contrast on white (passes WCAG AA/AAA), unlike
   // the lighter gray-400 this used to be.
+  // One shared chip so every dynamic value on the canvas looks identical —
+  // same container, size, weight and colour wherever it sits (headings,
+  // captions, label/value rows, cards, tags, table cells). It overrides the
+  // parent's font so a heading's value doesn't look different from a
+  // caption's. Solid soft border + dotted underline (the dotted line also
+  // shows on empty values). slate-700 on the very light orange tint is well above WCAG AA.
   const dynamicValue = (text) =>
-    `<span class="text-gray-600 border-b border-dashed border-gray-400 inline-block min-w-[3rem]">${escapeHtml(
+    `<span class="inline-flex items-center align-middle min-h-[1.75rem] px-2 py-1 rounded-md border border-[#F9E2D4] bg-[#FFF8F3] text-sm leading-5 font-normal text-slate-700 whitespace-nowrap"><span class="inline-block min-w-[2.5rem] border-b-[1.5px] border-dotted border-slate-500 leading-4">${escapeHtml(
       text || ""
-    )}</span>`;
+    )}</span></span>`;
 
   function searchbarPill(el) {
     return `
@@ -690,8 +696,8 @@
       case "card":
         return `
           <div class="${CANVAS_EL_CLASS} bg-white border border-gray-200 rounded-md p-3 mb-3" ${canvasElAttr(el)}>
-            <div class="text-sm font-medium text-gray-800">${dynamicValue(el.title)}</div>
-            <div class="text-xs text-gray-500">${dynamicValue(el.subtitle)}</div>
+            <div>${dynamicValue(el.title)}</div>
+            <div class="mt-1.5">${dynamicValue(el.subtitle)}</div>
           </div>`;
       case "success":
         return `
@@ -734,7 +740,7 @@
                 (p) => `
               <div class="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
                 <span class="text-sm font-bold text-gray-900">${escapeHtml(p.label)}</span>
-                <span class="text-sm text-gray-700">${dynamicValue(p.value)}</span>
+                <span class="text-sm text-gray-700">${p.value ? dynamicValue(p.value) : "*"}</span>
               </div>`
               )
               .join("")}
@@ -769,9 +775,12 @@
         // rather than an underline. A fixed gray-500 border also renders
         // reliably against every pill color, unlike a `border-current`
         // opacity modifier, which Tailwind doesn't reliably generate.
-        const text = active
-          ? escapeHtml(displayText)
-          : `<span class="border-b border-dashed border-gray-500 pb-0.5">${escapeHtml(displayText)}</span>`;
+        // Generic default = the shared dynamic chip, like every other
+        // dynamic value; a previewed state shows the real coloured tag.
+        if (!active) {
+          return `<div class="${CANVAS_EL_CLASS} block w-fit mb-3 rounded-md" ${canvasElAttr(el)}>${dynamicValue(displayText)}</div>`;
+        }
+        const text = escapeHtml(displayText);
         return `
           <div class="${CANVAS_EL_CLASS} block w-fit mb-3 ${shape}" ${canvasElAttr(el)}>
             <span class="inline-block text-xs ${weight} px-2.5 py-1 ${shape} ${tagColorClasses(tagStyle)}">${text}</span>
@@ -799,7 +808,7 @@
                     .map(
                       (row) => `
                     <tr class="border-t border-gray-100">
-                      ${row.map((cell) => `<td class="px-3 py-3 text-gray-400 whitespace-nowrap">${escapeHtml(cell)}</td>`).join("")}
+                      ${row.map((cell) => `<td class="px-3 py-3 whitespace-nowrap">${dynamicValue(cell)}</td>`).join("")}
                     </tr>`
                     )
                     .join("")}
