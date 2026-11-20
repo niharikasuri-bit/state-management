@@ -258,6 +258,14 @@
       text || ""
     )}</span></span>`;
 
+  // Same dotted-underline marker without the tinted box — used inside the
+  // grey member card (Member Name, Gender | Age), where the box isn't wanted.
+  // Inherits the surrounding font so the heading stays a heading.
+  const dynamicPlain = (text) =>
+    `<span class="inline-block min-w-[2.5rem] border-b-[1.5px] border-dotted border-slate-500 leading-snug">${escapeHtml(
+      text || ""
+    )}</span>`;
+
   function searchbarPill(el) {
     return `
       <div class="${CANVAS_EL_CLASS} flex-1 min-w-0 h-10 flex items-center gap-2 border border-gray-300 rounded-md px-3 bg-white" ${canvasElAttr(
@@ -532,7 +540,7 @@
   // element in the canvas, not merged into a single one.
   function captionPairMarkup(a, b) {
     const valueSpan = (el) =>
-      `<span class="${CANVAS_EL_CLASS} rounded-md" ${canvasElAttr(el)}>${dynamicValue(el.value || el.label)}</span>`;
+      `<span class="${CANVAS_EL_CLASS} rounded-md" ${canvasElAttr(el)}>${(el.innerCard ? dynamicPlain : dynamicValue)(el.value || el.label)}</span>`;
     return `<div class="flex items-center gap-1.5 text-sm text-gray-500 mb-3">${valueSpan(a)}<span class="text-gray-300">|</span>${valueSpan(
       b
     )}</div>`;
@@ -661,9 +669,11 @@
         // gates (the found result, the empty state, etc.) takes over
         // instead, so the card steps aside.
         if (el.activeStateId) return "";
+        // No white card — a squarish block in the same light orange tint as
+        // the dynamic chips, with the dotted-underlined label centred in it.
         return `
-          <div class="${CANVAS_EL_CLASS} bg-white border border-gray-200 rounded-md p-3 mb-3" ${canvasElAttr(el)}>
-            <div class="text-sm font-medium text-gray-800">${dynamicValue(el.label)}</div>
+          <div class="${CANVAS_EL_CLASS} flex items-center justify-center h-28 mb-3 rounded-md border border-[#F9E2D4] bg-[#FFF8F3] text-sm text-slate-700" ${canvasElAttr(el)}>
+            ${dynamicPlain(el.label)}
           </div>`;
       case "emptyState":
         return `
@@ -714,7 +724,7 @@
         if (el.variant === "heading") {
           return `<div class="${CANVAS_EL_CLASS} text-base font-semibold text-gray-800 rounded-md" ${canvasElAttr(
             el
-          )}>${dynamicValue(el.value || el.label)}</div>`;
+          )}>${(el.innerCard ? dynamicPlain : dynamicValue)(el.value || el.label)}</div>`;
         }
         if (el.variant === "caption") {
           return `<div class="${CANVAS_EL_CLASS} text-sm text-gray-500 mb-3 rounded-md" ${canvasElAttr(el)}>${dynamicValue(
@@ -778,7 +788,9 @@
         // Generic default = the shared dynamic chip, like every other
         // dynamic value; a previewed state shows the real coloured tag.
         if (!active) {
-          return `<div class="${CANVAS_EL_CLASS} block w-fit mb-3 rounded-md" ${canvasElAttr(el)}>${dynamicValue(displayText)}</div>`;
+          // Beneficiary ID: no orange box, just the dotted-underlined text.
+          const mark = tagStyle === "id" ? dynamicPlain : dynamicValue;
+          return `<div class="${CANVAS_EL_CLASS} block w-fit mb-3 rounded-md text-sm text-slate-700" ${canvasElAttr(el)}>${mark(displayText)}</div>`;
         }
         const text = escapeHtml(displayText);
         return `
