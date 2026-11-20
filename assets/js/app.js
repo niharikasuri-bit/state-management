@@ -918,12 +918,12 @@
         </div>`;
     }
 
-    // "Default preview" tag sits on the phone's bottom edge (straddling the
-    // bezel), so it never takes height from the phone; the full sentence
+    // "Default preview" tag sits just under the phone (never overlapping it);
+    // the phone keeps 2.5rem free below for it. The full sentence
     // shows in a tooltip above it on hover/focus.
     const previewTagHtml = isPreviewingAState
       ? ""
-      : `<div id="default-preview-caption" class="group absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-1/2 z-20 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white border border-gray-300 shadow-sm text-xs text-gray-600 whitespace-nowrap">
+      : `<div id="default-preview-caption" class="group absolute left-1/2 top-full mt-2 -translate-x-1/2 z-20 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white border border-gray-300 shadow-sm text-xs text-gray-600 whitespace-nowrap">
           Default preview
           <button type="button" class="inline-flex text-gray-500 hover:text-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c2410c]/40 rounded-full" aria-label="About the default preview" aria-describedby="default-preview-tip">
             <svg class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.4"/><path d="M10 9v4.5M10 6.5v.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
@@ -934,7 +934,7 @@
         </div>`;
 
     canvasEl.innerHTML = `
-      <div class="relative h-full max-h-[660px] flex items-center">
+      <div class="relative ${previewTagHtml ? "h-[calc(100%-2.5rem)] mb-10" : "h-full"} max-h-[660px] flex items-center">
       <div class="phone-frame relative rounded-[2rem] border-[10px] border-black bg-white shadow-xl overflow-hidden flex flex-col">
         <div class="flex items-center gap-2 px-4 py-3 bg-[#0f3d4e] text-white flex-shrink-0">
           <svg class="w-4 h-4" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
