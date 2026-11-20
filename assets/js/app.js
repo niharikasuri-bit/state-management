@@ -905,33 +905,13 @@
 
     const gating = computeStateGating(screen);
 
-    // The "default preview" caption only makes sense while every dynamic
-    // element is actually showing its default — hide it the moment any
-    // state is being actively previewed (e.g. a specific Delivery Status).
-    const isPreviewingAState = screen.elements.some((el) => el.states && el.activeStateId);
-    // "Default preview" tag sits just below the blue screen-name chip
-    // (absolutely positioned, so it takes no height from the phone). The full sentence
-    // shows in a tooltip above it on hover/focus.
-    const previewTagHtml = isPreviewingAState
-      ? ""
-      : `<div id="default-preview-caption" class="group absolute left-4 top-full mt-1.5 z-20 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white border border-gray-300 shadow-sm text-xs text-gray-600 whitespace-nowrap">
-          Default preview
-          <button type="button" class="inline-flex text-gray-500 hover:text-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c2410c]/40 rounded-full" aria-label="About the default preview" aria-describedby="default-preview-tip">
-            <svg class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.4"/><path d="M10 9v4.5M10 6.5v.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-          </button>
-          <div id="default-preview-tip" role="tooltip" class="pointer-events-none absolute left-0 top-full mt-2 w-64 whitespace-normal rounded-md bg-gray-900 px-3 py-2 text-xs leading-snug text-white shadow-lg opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity">
-            You&rsquo;re viewing the default preview. Scroll or select an element in Page Properties to start exploring it.
-          </div>
-        </div>`;
-
     const toolbarEl = document.getElementById("canvas-toolbar");
     if (toolbarEl) {
       toolbarEl.innerHTML = `
         <div class="flex-shrink-0 whitespace-nowrap inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-50 text-xs font-medium text-[#191D88]">
           <svg class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="4" rx="1" stroke="currentColor" stroke-width="1.4"/><rect x="3" y="12" width="14" height="4" rx="1" stroke="currentColor" stroke-width="1.4"/></svg>
           ${escapeHtml(screen.name)}
-        </div>
-        ${previewTagHtml}`;
+        </div>`;
     }
 
     canvasEl.innerHTML = `
