@@ -1614,8 +1614,8 @@
                   ? "text-[#9a3412] border-[#c2410c] bg-white hover:bg-orange-100"
                   : "text-gray-400 border-gray-200 bg-white hover:bg-orange-50 hover:text-[#c2410c]"
               } flex-shrink-0 w-7 h-7 flex items-center justify-center border rounded-md transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c2410c]/40" aria-label="${
-              isActive ? "Previewing — click to stop previewing" : "Preview this type"
-            }" title="${isActive ? "Stop previewing" : "Preview"}">${eyeIcon}</span>
+              isActive ? "Previewing — click to stop previewing" : "Preview this state"
+            }" title="${isActive ? "Stop previewing" : "Preview this state"}">${eyeIcon}</span>
           </button>`;
           })
           .join("")}
@@ -2277,6 +2277,24 @@
     return null;
   }
 
+  // Swap in a campaign's own Delivery Status types. Each one reveals the same
+  // action buttons as the library status with the same tag colour.
+  function applyDeliveryStatuses(cats, statuses) {
+    for (const cat of cats) {
+      for (const screen of cat.screens) {
+        const el = screen.elements.find((e) => e.id === "delivery-status");
+        if (!el) continue;
+        const byStyle = Object.fromEntries(el.states.map((s) => [s.tagStyle, s]));
+        el.activeStateId = null;
+        el.states = statuses.map((s) => ({
+          ...s,
+          elementIds: [...(byStyle[s.tagStyle]?.elementIds || [])],
+          logic: dummyLogic(s.name),
+        }));
+      }
+    }
+  }
+
   function categoriesFor(c) {
     if (campaignCategories[c.name]) return campaignCategories[c.name];
     const built = c.screens.map(buildScreen).filter(Boolean);
@@ -2287,6 +2305,7 @@
         screens: built.filter((b) => b.catKey === cat.key).map((b) => b.screen),
       }))
       .filter((cat) => cat.screens.length);
+    if (c.deliveryStatuses) applyDeliveryStatuses(cats, c.deliveryStatuses);
     campaignCategories[c.name] = cats;
     return cats;
   }

@@ -59,11 +59,11 @@ window.DIGIT_MODULE = {
               elementType: "Template card", activeStateId: null,
               infoText: "List of different search results that appear on the screen when a user searches.",
               states: [
-                { id: "no-beneficiary", name: "Beneficiary Not Found", elements: [{ id: "empty-state", required: true }] },
                 {
-                  id: "beneficiary-name-search", name: "Beneficiary Name Search",
+                  id: "beneficiary-details", name: "Beneficiary details",
                   elements: [
                     { id: "field-beneficiary-name", required: true },
+                    { id: "field-beneficiary-id", required: false },
                     { id: "btn-open", required: true },
                     { id: "field-member-in-house", required: false },
                     { id: "field-location", required: false },
@@ -71,17 +71,7 @@ window.DIGIT_MODULE = {
                     { id: "table-member-details", required: false }
                   ]
                 },
-                {
-                  id: "beneficiary-id-search", name: "Beneficiary ID Search",
-                  elements: [
-                    { id: "field-beneficiary-id", required: true },
-                    { id: "btn-open", required: true },
-                    { id: "field-member-in-house", required: false },
-                    { id: "field-location", required: false },
-                    { id: "field-coordinates", required: false },
-                    { id: "table-member-details", required: false }
-                  ]
-                }
+                { id: "no-beneficiary", name: "Beneficiary not found", elements: [{ id: "empty-state", required: true }] }
               ]
             },
             {
@@ -418,8 +408,22 @@ window.DIGIT_MODULE = {
 // Campaigns offered on the selection screen shown before the configurator.
 // Each one opens the mobile configurator for its flow.
 window.DIGIT_CAMPAIGNS = [
-  { name: "Polio", flow: "House to House", screens: ["Search Beneficiary", "Household Overview", "Vaccination Summary"] },
-  { name: "Immunization", flow: "House to House", screens: ["Search Beneficiary", "Household Overview", "Vaccination Summary"] },
+  { name: "Polio", flow: "House to House", screens: ["Search Beneficiary", "Household Overview", "Vaccination Summary"],
+  deliveryStatuses: [
+    { id: "not-eligible", name: "Not eligible", tagStyle: "danger" },
+    { id: "not-visited", name: "Visit pending", tagStyle: "neutral" },
+    { id: "administered-successfully", name: "Vaccinated successfully", tagStyle: "success" },
+    { id: "administration-failed", name: "Unable to vaccinate", tagStyle: "warning" },
+    { id: "re-vaccinated", name: "Vaccinated on revisit", tagStyle: "info" },
+  ] },
+  { name: "Immunization", flow: "House to House", screens: ["Search Beneficiary", "Household Overview", "Vaccination Summary"],
+  deliveryStatuses: [
+    { id: "not-eligible", name: "Not eligible", tagStyle: "danger" },
+    { id: "not-visited", name: "Visit pending", tagStyle: "neutral" },
+    { id: "administered-successfully", name: "Vaccinated successfully", tagStyle: "success" },
+    { id: "administration-failed", name: "Unable to vaccinate", tagStyle: "warning" },
+    { id: "re-vaccinated", name: "Vaccinated on revisit", tagStyle: "info" },
+  ] },
   { name: "Co-Delivery", flow: "Registration & Delivery", screens: ["Search Beneficiary", "Household Overview", "Delivery Summary"] },
   { name: "Bednet", flow: "Registration & Delivery", screens: ["Search Households", "Household Overview"] },
   { name: "SMC", flow: "Registration & Delivery", screens: ["Search Beneficiary", "Household Overview", "Delivery Summary"] },
