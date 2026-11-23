@@ -411,12 +411,13 @@ window.DIGIT_CAMPAIGNS = [
   { name: "Polio", flow: "House to House", screens: ["Search Beneficiary", "Household Overview", "Vaccination Summary"],
   // Polio says "vaccinate" / "vaccination", never "deliver" / "delivery".
   wording: "vaccination",
-  // "Take Action" on Unable to vaccinate opens a popup of next steps.
+  // Every status that isn't vaccinated shows a primary "Take Action",
+  // which opens a popup of next steps.
   extraElements: {
     "household-overview": {
       after: "btn-unable-to-deliver",
       elements: [
-        { id: "btn-take-action", label: "Take Action", type: "button", configurable: true, visible: true, text: "Take Action", style: "outline", contextual: true, outerCard: true, innerCard: true, triggersPopup: "popup-take-action", ctaGroup: "Delivery actions", elementType: "Action popup" },
+        { id: "btn-take-action", label: "Take Action", type: "button", configurable: true, visible: true, text: "Take Action", style: "primary", contextual: true, outerCard: true, innerCard: true, triggersPopup: "popup-take-action", ctaGroup: "Delivery actions", elementType: "Action popup" },
       ],
       popups: [
         { id: "popup-take-action", label: "Take Action", type: "popup", configurable: true, visible: false, peek: true, elementType: "Action Popup", title: "What action do you want to take?", message: "" },
@@ -427,8 +428,8 @@ window.DIGIT_CAMPAIGNS = [
     },
   },
   deliveryStatuses: [
-    { id: "not-eligible", name: "Not eligible", tagStyle: "danger" },
-    { id: "not-visited", name: "Visit pending", tagStyle: "neutral" },
+    { id: "not-eligible", name: "Not eligible", tagStyle: "danger", elementIds: ["btn-take-action"] },
+    { id: "not-visited", name: "Visit pending", tagStyle: "neutral", elementIds: ["btn-take-action"] },
     { id: "administered-successfully", name: "Vaccinated successfully", tagStyle: "success" },
     { id: "administration-failed", name: "Unable to vaccinate", tagStyle: "warning", elementIds: ["btn-take-action"] },
     { id: "re-vaccinated", name: "Vaccinated on revisit", tagStyle: "info" },
