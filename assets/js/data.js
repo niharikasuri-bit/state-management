@@ -425,7 +425,11 @@ window.DIGIT_CAMPAIGNS = [
     { id: "re-vaccinated", name: "Vaccinated on revisit", tagStyle: "info" },
   ] },
   { name: "Co-Delivery", flow: "Registration & Delivery", screens: ["Search Beneficiary", "Household Overview", "Delivery Summary"] },
-  { name: "Bednet", flow: "Registration & Delivery", screens: ["Search Households", "Household Overview"] },
+  { name: "Bednet", flow: "Registration & Delivery", screens: ["Search Households", "Household Overview"],
+  deliveryStatuses: [
+    { id: "not-delivered", name: "Not delivered", tagStyle: "neutral" },
+    { id: "delivered-successfully", name: "Delivered successfully", tagStyle: "success" },
+  ] },
   { name: "SMC", flow: "Registration & Delivery", screens: ["Search Beneficiary", "Household Overview", "Delivery Summary"] },
   { name: "Oncho (NTD)", flow: "Registration & Delivery", screens: ["Search Beneficiary", "Household Overview", "Delivery Summary"] },
 ];

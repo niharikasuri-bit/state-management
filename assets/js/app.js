@@ -2286,11 +2286,17 @@
         if (!el) continue;
         const byStyle = Object.fromEntries(el.states.map((s) => [s.tagStyle, s]));
         el.activeStateId = null;
+        const oldIds = el.states.flatMap((s) => s.elementIds);
         el.states = statuses.map((s) => ({
           ...s,
           elementIds: [...(byStyle[s.tagStyle]?.elementIds || [])],
           logic: dummyLogic(s.name),
         }));
+        // Buttons only a dropped status revealed (e.g. View Redose Detail)
+        // have no status left to show them, so they leave the screen.
+        const keep = new Set(el.states.flatMap((s) => s.elementIds));
+        const dropped = new Set(oldIds.filter((id) => !keep.has(id)));
+        screen.elements = screen.elements.filter((e) => !dropped.has(e.id));
       }
     }
   }
