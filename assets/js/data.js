@@ -418,11 +418,16 @@ window.DIGIT_CAMPAIGNS = [
       after: "btn-unable-to-deliver",
       elements: [
         { id: "btn-take-action", label: "Take Action", type: "button", configurable: true, visible: true, text: "Take Action", style: "primary", contextual: true, outerCard: true, innerCard: true, triggersPopup: "popup-take-action", ctaGroup: "Delivery actions", elementType: "Action popup" },
+        // Vaccinated successfully has its own Take Action, with redose options.
+        { id: "btn-take-action-vaccinated", label: "Take Action (Vaccinated successfully)", type: "button", configurable: true, visible: true, text: "Take Action", style: "primary", contextual: true, outerCard: true, innerCard: true, triggersPopup: "popup-take-action-vaccinated", ctaGroup: "Post-delivery actions", elementType: "Action popup" },
       ],
       popups: [
         { id: "popup-take-action", label: "Take Action", type: "popup", configurable: true, visible: false, peek: true, elementType: "Action Popup", title: "What action do you want to take?", message: "" },
         { id: "btn-popup-vaccinate", label: "Vaccinate", type: "button", configurable: true, visible: true, text: "Vaccinate", style: "primary", popupId: "popup-take-action" },
         { id: "btn-popup-vaccinated-elsewhere", label: "Mark as Vaccinated Elsewhere", type: "button", configurable: true, visible: true, text: "Mark as Vaccinated Elsewhere", style: "outline", popupId: "popup-take-action" },
+        { id: "popup-take-action-vaccinated", label: "Take Action (Vaccinated successfully)", type: "popup", configurable: true, visible: false, peek: true, elementType: "Action Popup", title: "What action do you want to take?", message: "" },
+        { id: "btn-popup-redose", label: "Redose", type: "button", configurable: true, visible: true, text: "Redose", style: "primary", popupId: "popup-take-action-vaccinated" },
+        { id: "btn-popup-vaccinated-elsewhere-2", label: "Mark as Vaccinated Elsewhere", type: "button", configurable: true, visible: true, text: "Mark as Vaccinated Elsewhere", style: "outline", popupId: "popup-take-action-vaccinated" },
         { id: "btn-popup-unable-to-visit", label: "Mark as Unable to Visit", type: "button", configurable: true, visible: true, text: "Mark as Unable to Visit", style: "outline", popupId: "popup-take-action" },
       ],
     },
@@ -430,7 +435,7 @@ window.DIGIT_CAMPAIGNS = [
   deliveryStatuses: [
     { id: "not-eligible", name: "Not eligible", tagStyle: "danger", elementIds: [] },
     { id: "not-visited", name: "Visit pending", tagStyle: "neutral", elementIds: ["btn-take-action"] },
-    { id: "administered-successfully", name: "Vaccinated successfully", tagStyle: "success" },
+    { id: "administered-successfully", name: "Vaccinated successfully", tagStyle: "success", elementIds: ["btn-take-action-vaccinated", "btn-view-delivery-details"] },
     { id: "administration-failed", name: "Unable to vaccinate", tagStyle: "warning", elementIds: ["btn-take-action"] },
     { id: "re-vaccinated", name: "Vaccinated on revisit", tagStyle: "info" },
   ] },
