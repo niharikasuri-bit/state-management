@@ -426,9 +426,7 @@ window.DIGIT_CAMPAIGNS = [
   ] },
   { name: "Co-Delivery", flow: "Registration & Delivery", screens: ["Search Beneficiary", "Household Overview", "Delivery Summary"] },
   { name: "Bednet", flow: "Registration & Delivery", screens: ["Search Households", "Household Overview"],
-  // Bednet delivers per household: the status sits on the household card,
-  // under Member Count, and there are no redose actions.
-  statusLevel: "household",
+  // Bednet has no redose actions.
   deliveryStatuses: [
     { id: "not-delivered", name: "Not delivered", tagStyle: "neutral", elementIds: ["btn-deliver-intervention", "btn-unable-to-deliver"] },
     { id: "delivered-successfully", name: "Delivered successfully", tagStyle: "success", elementIds: [] },
