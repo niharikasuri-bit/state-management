@@ -2279,7 +2279,7 @@
 
   // Swap in a campaign's own Delivery Status types. Each one reveals the same
   // action buttons as the library status with the same tag colour.
-  function applyDeliveryStatuses(cats, statuses) {
+  function applyDeliveryStatuses(cats, statuses, level) {
     for (const cat of cats) {
       for (const screen of cat.screens) {
         const el = screen.elements.find((e) => e.id === "delivery-status");
@@ -2289,7 +2289,7 @@
         const oldIds = el.states.flatMap((s) => s.elementIds);
         el.states = statuses.map((s) => ({
           ...s,
-          elementIds: [...(byStyle[s.tagStyle]?.elementIds || [])],
+          elementIds: [...(s.elementIds || byStyle[s.tagStyle]?.elementIds || [])],
           logic: dummyLogic(s.name),
         }));
         // Buttons only a dropped status revealed (e.g. View Redose Detail)
@@ -2297,6 +2297,16 @@
         const keep = new Set(el.states.flatMap((s) => s.elementIds));
         const dropped = new Set(oldIds.filter((id) => !keep.has(id)));
         screen.elements = screen.elements.filter((e) => !dropped.has(e.id));
+
+        // Household-level status: move the tag and the buttons it reveals out
+        // of the member card, to sit right under the Household Details pairs.
+        if (level === "household") {
+          const moved = screen.elements.filter((e) => e.id === el.id || keep.has(e.id));
+          moved.forEach((e) => { e.innerCard = false; });
+          screen.elements = screen.elements.filter((e) => !moved.includes(e));
+          const at = screen.elements.findIndex((e) => e.id === "household-details-pairs") + 1;
+          screen.elements.splice(at, 0, ...moved);
+        }
       }
     }
   }
@@ -2311,7 +2321,7 @@
         screens: built.filter((b) => b.catKey === cat.key).map((b) => b.screen),
       }))
       .filter((cat) => cat.screens.length);
-    if (c.deliveryStatuses) applyDeliveryStatuses(cats, c.deliveryStatuses);
+    if (c.deliveryStatuses) applyDeliveryStatuses(cats, c.deliveryStatuses, c.statusLevel);
     campaignCategories[c.name] = cats;
     return cats;
   }
