@@ -2239,7 +2239,72 @@
     });
   }
 
+  // Full screen library, captured once so each campaign can pick its own set.
+  const MASTER_CATEGORIES = structuredClone(MODULE.categories);
+  // Each campaign keeps its own copy, so edits in one never leak into another.
+  const campaignCategories = {};
+
+  function masterScreen(id) {
+    for (const cat of MASTER_CATEGORIES) {
+      const s = cat.screens.find((s) => s.id === id);
+      if (s) return { cat, screen: s };
+    }
+    return null;
+  }
+
+  // Screens that exist in the library under the same name, or are derived
+  // from a library screen when a campaign uses a different name.
+  function buildScreen(name) {
+    for (const cat of MASTER_CATEGORIES) {
+      const s = cat.screens.find((s) => s.name === name);
+      if (s) return { catKey: cat.key, screen: structuredClone(s) };
+    }
+    if (name === "Delivery Summary") {
+      const src = masterScreen("vaccination-summary");
+      const json = JSON.stringify(src.screen)
+        .replace(/Vaccination/g, "Delivery")
+        .replace(/vaccination/g, "delivery")
+        .replace(/Vaccinate/g, "Deliver")
+        .replace(/vaccinate/g, "deliver");
+      return { catKey: src.cat.key, screen: JSON.parse(json) };
+    }
+    if (name === "Search Households") {
+      const src = masterScreen("search-beneficiary");
+      const screen = structuredClone(src.screen);
+      Object.assign(screen, { id: "search-households", name, pageHeading: name });
+      return { catKey: src.cat.key, screen };
+    }
+    return null;
+  }
+
+  function categoriesFor(c) {
+    if (campaignCategories[c.name]) return campaignCategories[c.name];
+    const built = c.screens.map(buildScreen).filter(Boolean);
+    const cats = MASTER_CATEGORIES
+      .map((cat) => ({
+        key: cat.key,
+        label: cat.label,
+        screens: built.filter((b) => b.catKey === cat.key).map((b) => b.screen),
+      }))
+      .filter((cat) => cat.screens.length);
+    campaignCategories[c.name] = cats;
+    return cats;
+  }
+
   function openCampaign(c) {
+    MODULE.categories = categoriesFor(c);
+    const first = MODULE.categories[0].screens[0];
+    Object.assign(state, {
+      activeNav: "flows",
+      expanded: new Set(MODULE.categories.map((cat) => cat.key)),
+      search: "",
+      openTabs: [first.id],
+      activeScreenId: first.id,
+      activeElementId: null,
+      fieldTab: "elements",
+      activeStateSubId: null,
+      stateSubTab: "elements",
+    });
     document.getElementById("module-title").textContent = `${c.name} - ${c.flow}`;
     document.title = `${c.name} - ${c.flow} | Form Configurator`;
     document.getElementById("campaign-select").classList.add("hidden");
