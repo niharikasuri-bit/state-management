@@ -2311,6 +2311,26 @@
     }
   }
 
+  // Campaigns that vaccinate (e.g. Polio) say "vaccination", never "delivery".
+  // Rewrites every visible text value; ids are left alone.
+  const TEXT_KEYS = new Set(["label", "text", "name", "infoText", "ctaGroup", "title", "message", "pageHeading", "pageDescription", "value", "placeholder"]);
+  function toVaccinationWording(str) {
+    return str
+      .replace(/^Deliver Intervention$/, "Record Vaccination")
+      .replace(/\bDelivery\b/g, "Vaccination")
+      .replace(/\bdelivery\b/g, "vaccination")
+      .replace(/\bDeliver\b/g, "Vaccinate")
+      .replace(/\bdeliver\b/g, "vaccinate");
+  }
+  function applyVaccinationWording(node) {
+    if (Array.isArray(node)) return node.forEach(applyVaccinationWording);
+    if (!node || typeof node !== "object") return;
+    for (const [k, v] of Object.entries(node)) {
+      if (typeof v === "string" && TEXT_KEYS.has(k)) node[k] = toVaccinationWording(v);
+      else if (typeof v === "object") applyVaccinationWording(v);
+    }
+  }
+
   function categoriesFor(c) {
     if (campaignCategories[c.name]) return campaignCategories[c.name];
     const built = c.screens.map(buildScreen).filter(Boolean);
@@ -2322,6 +2342,7 @@
       }))
       .filter((cat) => cat.screens.length);
     if (c.deliveryStatuses) applyDeliveryStatuses(cats, c.deliveryStatuses, c.statusLevel);
+    if (c.wording === "vaccination") applyVaccinationWording(cats);
     campaignCategories[c.name] = cats;
     return cats;
   }

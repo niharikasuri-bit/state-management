@@ -409,6 +409,8 @@ window.DIGIT_MODULE = {
 // Each one opens the mobile configurator for its flow.
 window.DIGIT_CAMPAIGNS = [
   { name: "Polio", flow: "House to House", screens: ["Search Beneficiary", "Household Overview", "Vaccination Summary"],
+  // Polio says "vaccinate" / "vaccination", never "deliver" / "delivery".
+  wording: "vaccination",
   deliveryStatuses: [
     { id: "not-eligible", name: "Not eligible", tagStyle: "danger" },
     { id: "not-visited", name: "Visit pending", tagStyle: "neutral" },
