@@ -1056,9 +1056,11 @@
                       )
                       .join("")}
                   </div>`
-                : `<div class="text-xs text-gray-500 leading-snug ${buttons.length ? "mb-3" : ""}">${escapeHtml(
+                : el.message
+                ? `<div class="text-xs text-gray-500 leading-snug ${buttons.length ? "mb-3" : ""}">${escapeHtml(
                     el.message
                   )}</div>`
+                : `<div class="mb-1.5"></div>`
             }
             ${buttons.map((b) => buttonMarkup(b)).join("")}
           </div>
@@ -2341,6 +2343,15 @@
         screens: built.filter((b) => b.catKey === cat.key).map((b) => b.screen),
       }))
       .filter((cat) => cat.screens.length);
+    // Campaign-only buttons and popups, added before statuses are applied so
+    // a status can reveal them.
+    for (const [screenId, extra] of Object.entries(c.extraElements || {})) {
+      const screen = cats.flatMap((cat) => cat.screens).find((s) => s.id === screenId);
+      if (!screen) continue;
+      const at = screen.elements.findIndex((e) => e.id === extra.after) + 1 || screen.elements.length;
+      screen.elements.splice(at, 0, ...structuredClone(extra.elements || []));
+      screen.elements.push(...structuredClone(extra.popups || []));
+    }
     if (c.deliveryStatuses) applyDeliveryStatuses(cats, c.deliveryStatuses, c.statusLevel);
     if (c.wording === "vaccination") applyVaccinationWording(cats);
     campaignCategories[c.name] = cats;
