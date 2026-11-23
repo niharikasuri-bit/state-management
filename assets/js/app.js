@@ -2210,9 +2210,50 @@
     }
   }
 
+  // ---------- Campaign selection (before the configurator) ----------
+
+  function escapeText(s) {
+    return String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  }
+
+  function renderCampaignSelect() {
+    const grid = document.getElementById("campaign-grid");
+    grid.innerHTML = (window.DIGIT_CAMPAIGNS || []).map((c, i) => `
+      <button type="button" data-campaign="${i}"
+        class="text-left bg-white border border-gray-200 rounded-lg p-5 hover:border-[#c2410c] hover:shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c2410c] transition flex flex-col">
+        <div class="flex items-start justify-between gap-3 mb-1">
+          <span class="text-lg font-semibold text-[#363636]">${escapeText(c.name)}</span>
+          <svg class="w-5 h-5 text-[#c2410c] flex-shrink-0 mt-0.5" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M8 4L14 10L8 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <span class="text-sm text-[#707070] mb-4">${escapeText(c.flow)}</span>
+        <ul class="flex flex-col gap-2 border-t border-gray-100 pt-3">
+          ${c.screens.map((s) => `
+            <li class="flex items-center gap-2 text-sm text-[#363636]">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#c2410c]"></span>${escapeText(s)}
+            </li>`).join("")}
+        </ul>
+      </button>`).join("");
+
+    grid.querySelectorAll("[data-campaign]").forEach((btn) => {
+      btn.addEventListener("click", () => openCampaign(window.DIGIT_CAMPAIGNS[Number(btn.dataset.campaign)]));
+    });
+  }
+
+  function openCampaign(c) {
+    document.getElementById("module-title").textContent = `${c.name} - ${c.flow}`;
+    document.title = `${c.name} - ${c.flow} | Form Configurator`;
+    document.getElementById("campaign-select").classList.add("hidden");
+    render();
+  }
+
   function init() {
     document.getElementById("module-title").textContent = MODULE.name;
     document.getElementById("module-version").textContent = `(AppConfig Version - ${MODULE.version})`;
+
+    renderCampaignSelect();
+    document.getElementById("back-to-campaigns").addEventListener("click", () => {
+      document.getElementById("campaign-select").classList.remove("hidden");
+    });
 
     document.querySelectorAll(".rail-item").forEach((btn) => {
       btn.addEventListener("click", () => {

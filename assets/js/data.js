@@ -414,3 +414,14 @@ window.DIGIT_MODULE = {
     }
   ]
 };
+
+// Campaigns offered on the selection screen shown before the configurator.
+// Each one opens the mobile configurator for its flow.
+window.DIGIT_CAMPAIGNS = [
+  { name: "Polio", flow: "House to House", screens: ["Search Beneficiary", "Household Overview", "Vaccination Summary"] },
+  { name: "Immunization", flow: "House to House", screens: ["Search Beneficiary", "Household Overview", "Vaccination Summary"] },
+  { name: "Co-Delivery", flow: "Registration & Delivery", screens: ["Search Beneficiary", "Household Overview", "Delivery Summary"] },
+  { name: "Bednet", flow: "Registration & Delivery", screens: ["Search Households", "Household Overview"] },
+  { name: "SMC", flow: "Registration & Delivery", screens: ["Search Beneficiary", "Household Overview", "Delivery Summary"] },
+  { name: "Oncho (NTD)", flow: "Registration & Delivery", screens: ["Search Beneficiary", "Household Overview", "Delivery Summary"] },
+];
