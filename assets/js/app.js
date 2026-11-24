@@ -2352,6 +2352,15 @@
       screen.elements.splice(at, 0, ...structuredClone(extra.elements || []));
       screen.elements.push(...structuredClone(extra.popups || []));
     }
+    // Member Type (Head of Household / Guest) sits on the member card,
+    // right after the Beneficiary ID tag.
+    if (c.memberType) {
+      const screen = cats.flatMap((cat) => cat.screens).find((s) => s.id === "household-overview");
+      if (screen) {
+        const at = screen.elements.findIndex((e) => e.id === "tag-beneficiary-id") + 1 || screen.elements.length;
+        screen.elements.splice(at, 0, memberTypeTag());
+      }
+    }
     if (c.deliveryStatuses) applyDeliveryStatuses(cats, c.deliveryStatuses, c.statusLevel);
     if (c.wording === "vaccination") applyVaccinationWording(cats);
     campaignCategories[c.name] = cats;

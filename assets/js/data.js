@@ -405,6 +405,21 @@ window.DIGIT_MODULE = {
   ]
 };
 
+// Polio and Immunization: each member is either the Head of Household or a
+// Guest. A dynamic value like Delivery Status — no state shows by default;
+// preview one from "Types of Member Type" to see it on the member card.
+function memberTypeTag() {
+  return {
+    id: "member-type", label: "Member Type", type: "tag", configurable: true, visible: true,
+    elementType: "Template tag", outerCard: true, innerCard: true, activeStateId: null,
+    infoText: "Shows whether the member is the head of household or a guest.",
+    states: [
+      { id: "head-of-household", name: "Head of Household", tagStyle: "info", elementIds: [], logic: dummyLogic("Head of Household") },
+      { id: "guest", name: "Guest", tagStyle: "neutral", elementIds: [], logic: dummyLogic("Guest") }
+    ]
+  };
+}
+
 // Campaigns offered on the selection screen shown before the configurator.
 // Each one opens the mobile configurator for its flow.
 window.DIGIT_CAMPAIGNS = [
@@ -413,6 +428,7 @@ window.DIGIT_CAMPAIGNS = [
   wording: "vaccination",
   // Visit pending and Unable to vaccinate show a primary "Take Action",
   // which opens a popup of next steps.
+  memberType: true,
   extraElements: {
     "household-overview": {
       after: "btn-unable-to-deliver",
@@ -440,6 +456,7 @@ window.DIGIT_CAMPAIGNS = [
     { id: "re-vaccinated", name: "Vaccinated on revisit", tagStyle: "info" },
   ] },
   { name: "Immunization", flow: "House to House", screens: ["Search Beneficiary", "Household Overview", "Vaccination Summary"],
+  memberType: true,
   deliveryStatuses: [
     { id: "not-eligible", name: "Not eligible", tagStyle: "danger" },
     { id: "not-visited", name: "Visit pending", tagStyle: "neutral" },
