@@ -412,7 +412,7 @@ function memberTypeTag() {
   return {
     id: "member-type", label: "Member Type", type: "tag", configurable: true, visible: true,
     elementType: "Template tag", outerCard: true, innerCard: true, activeStateId: null,
-    infoText: "Shows whether the member is the head of household or a guest.",
+    infoText: "A predefined list of possible member types in a household.",
     states: [
       { id: "head-of-household", name: "Head of Household", tagStyle: "info", elementIds: [], logic: dummyLogic("Head of Household") },
       { id: "guest", name: "Guest", tagStyle: "neutral", elementIds: [], logic: dummyLogic("Guest") }
