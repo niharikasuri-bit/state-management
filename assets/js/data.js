@@ -457,6 +457,8 @@ window.DIGIT_CAMPAIGNS = [
   ] },
   { name: "Immunization", flow: "House to House", screens: ["Search Beneficiary", "Household Overview", "Vaccination Summary"],
   memberType: true,
+  // Immunization says "vaccinate" / "vaccination", never "deliver" / "delivery".
+  wording: "vaccination",
   deliveryStatuses: [
     { id: "not-eligible", name: "Not eligible", tagStyle: "danger" },
     { id: "not-visited", name: "Visit pending", tagStyle: "neutral" },
